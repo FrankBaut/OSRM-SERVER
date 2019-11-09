@@ -3,7 +3,7 @@ Crear un servidor de OSRM usando docker, y lanzarlo localmente
 
 
 Instaladocker siguiendo las instrucciones(Version de ubuntu)
-** instrucciones en https://docs.docker.com/install/
+- instrucciones en https://docs.docker.com/install/
 
 Crear una carpeta de trabajo, en ella se guaradaran todos los archivos descargados
 ** mkdir -p /data/osrm/Mexico
