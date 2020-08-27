@@ -1,3 +1,5 @@
+# OSRM-Docker Container
+
 A continuación presentamos el proceso para lanzar un servidor OSRM(Open Source
 Routig Machine) mediante un contenedor de Docker. La forma de construirlo se
 detalla como sigue.
@@ -42,11 +44,13 @@ que Docker necesita descargar antes el contenedor con OSRM. Posteriormente no
 será necesario, ya que tras la descarga guarda una copia local del contenedor.
 Quedan dos operaciones pendientes que OSRM necesita antes de poder realizar
 ruteos. Dividir el grafo en celdas, ejecutando: 
-- docker run -t -v $(pwd):/data
-osrm/osrm-backend osrm-partition /data/mexico-latest.osrm
+
+- docker run -t -v $(pwd):/data osrm/osrm-backend osrm-partition /data/mexico-latest.osrm
+
 Observe que ahora usamos mexico-latest.osrm (ya no es ".pbf"), un archivo que
 quedó en el directorio de trabajo tras ejecutar el paso anterior y por último:
 Asignar ’peso’ a cada celda del grafo con:
+
 - docker run -t -v $(pwd):/data osrm/ osrm-backend osrm-customize /data/mexico-latest.osrm
 
 Con los datos ya preparados, sólo resta iniciar el servicio de ruteo:
@@ -55,3 +59,16 @@ Con los datos ya preparados, sólo resta iniciar el servicio de ruteo:
 
 Con el comando anterior, estaremos lanzando OSRM localmente para realizar
 consultas en él.
+
+Por ejemplo, para llamar al servidor desde R, hacemos
+
+- library(tidyverse)
+- library(osrm)
+Por default, el puerto es:
+
+options(osrm.server = "http://127.0.0.1:5000/")
+Para trabajar con OSRM, hay otros paquetes que puedes usar el contenedor de docker de OSRM como:
+
+- stplanr
+- osrm
+- osrmr
