@@ -1,10 +1,10 @@
 # OSRM-Docker Container
 
-A continuación presentamos el proceso para lanzar un servidor OSRM(Open Source
+A continuación presentamos el proceso para lanzar un servidor OSRM (Open Source
 Routig Machine) mediante un contenedor de Docker. La forma de construirlo se
 detalla como sigue.
 
-Instala Docker siguiendo las instrucciones(versión de Ubuntu)
+Instala Docker siguiendo las instrucciones (versión de Ubuntu)
 
 instrucciones en https://docs.docker.com/install/
 
@@ -25,7 +25,7 @@ construyendo un modelo optimizado de la red de calles. Para la optimización se
 debe elegir un medio de transporte. Las opciones disponibles por default son: car,
 foot, bicycle.
 
-Hacemos la extracción para el modo automóvil(car) con:
+Hacemos la extracción para el modo automóvil (car) con:
 
 - docker run -t -v $(pwd):/data osrm/osrm-backend osrm-extract -p
 /opt/car.lua /data/mexico-latest.osm.pbf
@@ -66,7 +66,8 @@ Por ejemplo, para llamar al servidor desde R, hacemos
 - library(osrm)
 Por default, el puerto es:
 
-options(osrm.server = "http://127.0.0.1:5000/")
+- options(osrm.server = "http://127.0.0.1:5000/")
+
 Para trabajar con OSRM, hay otros paquetes que puedes usar el contenedor de docker de OSRM como:
 
 - stplanr
