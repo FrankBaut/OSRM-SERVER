@@ -1,74 +1,63 @@
 # OSRM-Docker Container
 
-A continuación presentamos el proceso para lanzar un servidor OSRM (Open Source
-Routig Machine) mediante un contenedor de Docker. La forma de construirlo se
-detalla como sigue.
+Here is the process to launch an OSRM (Open Source Routig Machine) server using a Docker container. 
+The way to build it is detailed as follows.
 
-Instala Docker siguiendo las instrucciones (versión de Ubuntu)
+Install Docker following the instructions (Ubuntu version)
 
-instrucciones en https://docs.docker.com/install/
+instructions in https://docs.docker.com/install/
 
-Crear una carpeta de trabajo, en ella se guardaran todos los archivos
-descargados:
+Create a work folder(Mexico in this case), in it all files will be saved
+downloaded:
 
 - mkdir -p /data/osrm/Mexico
 - cd /data/osrm/Mexico
 
-Descargamos los datos de las carretas de Mexico en Openstreetmap. Un
-repositorio de las bases de datos es geofabrik, en terminal y en la ruta
-anteriormente creada, ejecutamos:
+We downloaded the data of the roads of Mexico in Openstreetmap.
+A repository of the databases is geofabrik, in terminal and in the previously created path, we execute:
 
 - wget https://download.geofabrik.de/north-america/mexico-latest.osm.pbf
 
-OSRM necesita un pre-procesamiento de los datos extraídos de Openstreetmap,
-construyendo un modelo optimizado de la red de calles. Para la optimización se
-debe elegir un medio de transporte. Las opciones disponibles por default son: car,
-foot, bicycle.
+OSRM needs a pre-processing of the data extracted from Openstreetmap, 
+building an optimized model of the street network. For optimization, a means of transport must be chosen. 
+The options available by default are: car, foot, bicycle.
 
-Hacemos la extracción para el modo automóvil (car) con:
+We do the extraction for the automobile mode (car) with:
 
 - docker run -t -v $(pwd):/data osrm/osrm-backend osrm-extract -p
 /opt/car.lua /data/mexico-latest.osm.pbf
 
-Esto inicia una instancia de Docker, corre el comando osrm-extract y luego
-desactiva la instancia.
+This starts a Docker instance, runs the osrm-extract command, and then deactivates the instance.
 
-La opción -v $(pwd):/data crea un directorio /data dentro del contenedor de
-Docker, y muestra el contenido del directorio desde donde corrimos el comando;
-es decir, el directorio donde están descargados los datos de México. Así es como
-queda accesible para la instancia de Docker:
+The -v $ (pwd):/data option creates a /data directory inside the Docker container,
+and displays the contents of the directory from where we ran the command; that is,
+the directory where the data for Mexico is downloaded. This is how it is accessible to the Docker instance:
+
 - /data/mexico-latest.osm.pbf.
 
-Cuando corremos el comando por primera vez tomará unos cuantos minutos, ya
-que Docker necesita descargar antes el contenedor con OSRM. Posteriormente no
-será necesario, ya que tras la descarga guarda una copia local del contenedor.
-Quedan dos operaciones pendientes que OSRM necesita antes de poder realizar
-ruteos. Dividir el grafo en celdas, ejecutando: 
+When we run the command for the first time it will take a few minutes, since Docker needs to download the container with OSRM first. Later it will not be necessary, since after the download it saves a local copy of the container. There are two pending operations that OSRM needs before it can perform routes. Divide the graph into cells, executing:
 
 - docker run -t -v $(pwd):/data osrm/osrm-backend osrm-partition /data/mexico-latest.osrm
 
-Observe que ahora usamos mexico-latest.osrm (ya no es ".pbf"), un archivo que
-quedó en el directorio de trabajo tras ejecutar el paso anterior y por último:
-Asignar ’peso’ a cada celda del grafo con:
+Notice that we now use mexico-latest.osrm (it is no longer ".pbf"), a file that remained in the working directory after executing the previous step and finally: Assign ’weight’ to each cell of the graph with:
 
 - docker run -t -v $(pwd):/data osrm/ osrm-backend osrm-customize /data/mexico-latest.osrm
 
-Con los datos ya preparados, sólo resta iniciar el servicio de ruteo:
+With the data already prepared, it only remains to start the routing service:
 
 - docker run -t -i -p 5000:5000 -v $(pwd):/data osrm/osrm-backend osrm-routed –algorithm mld /data/mexico-latest.osrm
 
-Con el comando anterior, estaremos lanzando OSRM localmente para realizar
-consultas en él.
+With the above command, we will be launching OSRM locally to query it.
 
-Por ejemplo, para llamar al servidor desde R, hacemos
-
+For example, to call the server from R
 - library(tidyverse)
 - library(osrm)
-Por default, el puerto es:
+
+By default, the port is:
 
 - options(osrm.server = "http://127.0.0.1:5000/")
 
-Para trabajar con OSRM, hay otros paquetes que puedes usar el contenedor de docker de OSRM como:
+To work with OSRM, there are other packages that you can use the OSRM docker container like:
 
 - stplanr
 - osrm
